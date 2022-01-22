@@ -18,6 +18,16 @@ app.post('/sign-up', (req, res)=> {
     res.send("Ok");
 });
 
+app.post('/tweets', (req, res)=> {
+	const { username, tweet } = req.body;
+    const tweetBody = {
+        username,
+        tweet
+    };
+    database.tweets.push(tweetBody);
+    res.send("Ok");
+});
+
 app.get('/tweets', (req, res)=> {
 	const lastTweets = database.tweets.slice(-10);
     res.send(lastTweets.reverse());
