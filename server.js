@@ -19,7 +19,8 @@ app.post('/sign-up', (req, res)=> {
                 avatar
             };
             database.users.push(user);
-            res.send("Ok");
+            res.status(201);
+            res.send("OK");
         }
         else
         {
@@ -43,7 +44,8 @@ app.post('/tweets', (req, res)=> {
             tweet
         }
         database.tweets.push(tweetBody);
-        res.send("Ok");
+        res.status(201);
+        res.send("OK");
     }
     else
     {
