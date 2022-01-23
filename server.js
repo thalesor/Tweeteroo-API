@@ -36,16 +36,25 @@ app.post('/sign-up', (req, res)=> {
 });
 
 app.post('/tweets', (req, res)=> {
-	const { username, tweet } = req.body;
-    if(username && tweet)
+	const { tweet } = req.body;
+    const user = req.header('User');
+    if(tweet)
     {
-        const tweetBody = {
-            username,
-            tweet
+        if(user)
+        {
+            const tweetBody = {
+                username: user,
+                tweet
+            }
+            database.tweets.push(tweetBody);
+            res.status(201);
+            res.send("OK");
         }
-        database.tweets.push(tweetBody);
-        res.status(201);
-        res.send("OK");
+        else
+        {
+            res.status(400);
+            res.send("Não foi possível obter as informações do usuário"); 
+        }
     }
     else
     {
