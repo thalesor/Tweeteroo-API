@@ -67,6 +67,20 @@ app.get('/tweets', (req, res)=> {
     res.send(tweetsToReturn);
 });
 
+app.get('/tweets/:USERNAME', (req, res)=> {
+    const user = req.params.USERNAME;
+	const lastTweets = database.tweets.filter(t => t.username === user).reverse();
+    const tweetsToReturn = [];
+    lastTweets.forEach(t => {
+        const avatar = database.users.find(u=> u.username === t.username).avatar;
+        tweetsToReturn.push({
+            ...t,
+            avatar: avatar
+        });
+    })
+    res.send(tweetsToReturn);
+});
+
 const database = {
     users: [
     {
