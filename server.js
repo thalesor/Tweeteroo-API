@@ -14,11 +14,7 @@ app.post('/sign-up', (req, res)=> {
     {
         if(isValidImage(avatar))
         {
-            const user = {
-                username,
-                avatar
-            };
-            database.users.push(user);
+            database.users.push(req.body);
             res.status(201);
             res.send("OK");
         }
@@ -68,12 +64,21 @@ app.get('/tweets', (req, res)=> {
     const { page } = req.query;
     const total_items = database.tweets.length;
     const offset = total_items - (page * per_page);
-    if(offset <= 0)
+    let paginatedTweets;
+    if(offset < 10)
     {
-        res.status(200);
-        res.send("Você está em dia");
+        if(offset < 0)
+        {
+            res.status(200);
+            res.send("Você está em dia");
+        }
+        else
+        {
+            paginatedTweets = database.tweets.slice(0, offset).reverse();
+        }
     }
-	const paginatedTweets = database.tweets.slice(offset).slice(0, per_page).reverse();
+    else
+	paginatedTweets = database.tweets.slice(offset).slice(0, per_page).reverse();
     const tweetsToReturn = [];
 
     paginatedTweets.forEach(t => {
@@ -116,7 +121,6 @@ const database = {
         avatar: "https://pbs.twimg.com/profile_images/409413126/lulamolusco2_400x400.jpg"
     }],
     tweets: [
-        /*
         {
             username: "bobesponja",
             tweet: "Eu gosto de encher o saco das pessoas que eu amo"
@@ -136,7 +140,6 @@ const database = {
             username: "molusco",
             tweet: "Acredite na fantasia que vc quiser mas faça isso longe de mim"
         }
-        */
     ]
 }
 
