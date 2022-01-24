@@ -64,23 +64,34 @@ app.post('/tweets', (req, res)=> {
 });
 
 app.get('/tweets', (req, res)=> {
-	const lastTweets = database.tweets.slice(-10).reverse();
+    const per_page = 10;
+    const { page } = req.query;
+    const total_items = database.tweets.length;
+    const offset = total_items - (page * per_page);
+    if(offset <= 0)
+    {
+        res.status(200);
+        res.send("Você está em dia");
+    }
+	const paginatedTweets = database.tweets.slice(offset).slice(0, per_page).reverse();
     const tweetsToReturn = [];
-    lastTweets.forEach(t => {
+
+    paginatedTweets.forEach(t => {
         const avatar = database.users.find(u=> u.username === t.username).avatar;
         tweetsToReturn.push({
             ...t,
             avatar: avatar
         });
-    })
+    });
+
     res.send(tweetsToReturn);
 });
 
 app.get('/tweets/:USERNAME', (req, res)=> {
     const user = req.params.USERNAME;
-	const lastTweets = database.tweets.filter(t => t.username === user).reverse();
+	const allTweetsFromUser = database.tweets.filter(t => t.username === user).reverse();
     const tweetsToReturn = [];
-    lastTweets.forEach(t => {
+    allTweetsFromUser.forEach(t => {
         const avatar = database.users.find(u=> u.username === t.username).avatar;
         tweetsToReturn.push({
             ...t,
@@ -105,6 +116,7 @@ const database = {
         avatar: "https://pbs.twimg.com/profile_images/409413126/lulamolusco2_400x400.jpg"
     }],
     tweets: [
+        /*
         {
             username: "bobesponja",
             tweet: "Eu gosto de encher o saco das pessoas que eu amo"
@@ -124,7 +136,16 @@ const database = {
             username: "molusco",
             tweet: "Acredite na fantasia que vc quiser mas faça isso longe de mim"
         }
+        */
     ]
+}
+
+for(let i = 0; i <= 50; i++)
+{
+    database.tweets.push({
+        username: "bobesponja",
+        tweet: `${i}`
+    })
 }
 
 function isValidImage(url)
